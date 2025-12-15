@@ -1,7 +1,8 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Numeric
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column, relationship
 from uuid import uuid4, UUID
 from datetime import datetime
+from decimal import Decimal
 
 Base = declarative_base()
 
@@ -45,25 +46,46 @@ class Address(Base):
 
 class Product(Base):
     __tablename__ = 'products'
-    id: Mapped[UUID] = mapped_column(
-        primary_key=True,
-        default=uuid4,
-    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     label: Mapped[str] = mapped_column(nullable=False)
     count_in_package: Mapped[int] = mapped_column(nullable=False)
+    count_in_warehouse: Mapped[int] = mapped_column(nullable=False, default=0)
+    price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)  # Добавлено поле цены
+    
+    # Временные метки для соответствия best practices
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(default=datetime.now, onupdate=datetime.now)
+    
+    # Исправленные отношения
+    order_items = relationship("OrderItem", back_populates="product", cascade="all, delete-orphan")
 
-    orders = relationship('Order', back_populates='products')
-
+class OrderItem(Base):
+    __tablename__ = 'order_items'
+    
+    order_id: Mapped[UUID] = mapped_column(ForeignKey('orders.id'), primary_key=True)
+    product_id: Mapped[UUID] = mapped_column(ForeignKey('products.id'), primary_key=True)
+    
+    quantity: Mapped[int] = mapped_column(default=1)
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))  # Цена на момент заказа
+    
+    order = relationship("Order", back_populates="items")
+    product = relationship("Product", back_populates="order_items")
 
 class Order(Base):
     __tablename__ = 'orders'
-    id: Mapped[UUID] = mapped_column(
-        primary_key=True,
-        default=uuid4,
-    )
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('users.id'), nullable=False)
     address_id: Mapped[UUID] = mapped_column(ForeignKey('addresses.id'), nullable=False)
-    product_id: Mapped[UUID] = mapped_column(ForeignKey('products.id'), nullable=False)
-
+    
+    # Добавлены временные метки
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(default=datetime.now, onupdate=datetime.now)
+    
+    # Исправленные отношения
     user = relationship('User', back_populates='orders')
-    products = relationship('Product', back_populates='orders')
+    address = relationship('Address')  # Явная связь с адресом
+    items = relationship(
+        "OrderItem", 
+        back_populates="order",
+        cascade="all, delete-orphan"  # Автоудаление позиций при удалении заказа
+    )

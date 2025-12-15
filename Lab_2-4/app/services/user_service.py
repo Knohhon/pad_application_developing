@@ -1,9 +1,9 @@
 from typing import Optional, List, Any
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from repositories.user_repository import UserRepository
-from schemas.user import UserCreate, UserUpdate
-from models.user import User
+from app.repositories.user_repository import UserRepository
+from app.schemas.user import UserCreate, UserUpdate
+from app.models.database_models import User
 
 class UserService:
     def __init__(self, user_repository: UserRepository):

@@ -5,8 +5,8 @@ from litestar.exceptions import NotFoundException, ValidationException, Internal
 from litestar.params import Parameter
 from litestar.status_codes import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.user_service import UserService
-from schemas.user import UserCreate, UserUpdate, UserResponse
+from app.services.user_service import UserService
+from app.schemas.user import UserCreate, UserUpdate, UserResponse
 
 class UserController(Controller):
     path = "/users"

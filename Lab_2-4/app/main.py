@@ -13,9 +13,9 @@ from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Contact, Tag
 from litestar.config.cors import CORSConfig
 
-from controllers.user_controller import UserController
-from repositories.user_repository import UserRepository
-from services.user_service import UserService
+from app.controllers.user_controller import UserController
+from app.repositories.user_repository import UserRepository
+from app.services.user_service import UserService
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 

@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from models.user import User
-from schemas.user import UserCreate, UserUpdate
+from app.models.database_models import User
+from app.schemas.user import UserCreate, UserUpdate
 
 class UserRepository:
     async def get_by_id(self, session: AsyncSession, user_id: UUID) -> Optional[User]:
