@@ -6,7 +6,6 @@ from uuid import UUID
 from pydantic import BaseModel, field_validator
 
 
-# Базовые схемы
 class ProductInOrder(BaseModel):
     id: UUID
     label: str
@@ -20,7 +19,6 @@ class AddressInOrder(BaseModel):
     country: str
 
 
-# Схемы для OrderItem
 class OrderItemCreate(BaseModel):
     product_id: UUID
     quantity: int = 1
