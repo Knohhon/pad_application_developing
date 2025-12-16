@@ -45,11 +45,11 @@ async def send_message(routing_key: str, message: dict):
             body=json.dumps(message, default=str).encode(),
             content_type="application/json",
             delivery_mode=aio_pika.DeliveryMode.NOT_PERSISTENT,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(),
             headers={
                 "source": "test_producer",
                 "message_id": str(uuid.uuid4()),
-                "sent_at": datetime.utcnow().isoformat()
+                "sent_at": datetime.now().isoformat()
             }
         )
         
