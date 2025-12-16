@@ -1,0 +1,42 @@
+services:
+  web: 
+    build: .
+    ports: 
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@localhost/database
+    depends_on:
+      - db
+      
+  db:
+    image: postgres:15
+    container_name: my_postgresql
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - my_network
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: my_pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+volumes:
+  postgres_data:
+
+networks:
+  my_network:
